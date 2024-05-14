@@ -54,7 +54,37 @@ Her zaman olduğu gibi, sistemdeki önemli verileri ve yapılandırmaları yedek
 
 **Not:** Bu işlemi çalışma bittiken sonra yapmak daha sağlıklı olacaktır.
 
-### 3. Sistemi Yükseltin
+Tabii, eklemek istediğiniz bölümleri aşağıdaki gibi dökümanınıza ekleyebilirsiniz:
+
+---
+
+### 3. TCP Port 1022'yi Hazırlama
+
+**Not:** Saldırı yüzeyinizi genişletmekten kaçınmak için mümkün olduğunca bir kale (bastion host) kullanmak güvenlik açısından en iyi uygulamadır.
+
+SSH bağlantıları için varsayılan port 22'dir. Yükseltme sırasında SSH yapılandırması değiştirilmiş veya yanlış ayarlanmış olabilir ve varsayılan SSH hizmeti erişilemez hale gelebilir. Port 1022'nin ikincil bir SSH portu olarak ayarlanması, varsayılan port üzerinde oluşabilecek sorunları gidermek ve uzaktan erişiminizi sağlamak için önemlidir.
+
+Yükseltme işlemi sırasında, SSH dahil çeşitli hizmetler ve yapılandırmalar yeniden başlatılabilir veya yeniden yüklenebilir. Bu işlemler sırasında bir şeyler ters giderse, ek bir porta sahip olmak, sunucuya uzaktan erişimi kaybetmemize engel olabilir.
+
+İlk olarak, Ubuntu güvenlik duvarında bu belirli porta izin verelim:
+
+```bash
+sudo ufw allow 1022/tcp
+```
+
+Kuralı uygulamak için aşağıdaki komutu çalıştırın:
+
+```bash
+sudo ufw reload
+```
+
+Son olarak, portların düzgün bir şekilde listelendiğini kontrol edebiliriz:
+
+```bash
+sudo ufw status
+```
+
+### 4. Sistemi Yükseltin
 
 **Do-release-upgrade Komutu:** Sunucu sürümü ve bulut görüntüleri üzerinde `do-release-upgrade` komutunu kullanarak sistemi yükseltmenizi öneririz. Bu komut, bazen sürümler arasında ihtiyaç duyulan sistem yapılandırması değişikliklerini işleyebilir.
 
@@ -163,7 +193,7 @@ Remove obsolete packages?
 Continue [yN]  Details [d]
 ```
 
-### 4. Sistemi Yeniden Başlatma
+### 5. Sistemi Yeniden Başlatma
 
 Son olarak, yükseltme işlemi tamamlandığında sistemin yeniden başlatılması istenir. Sistem, yeniden başlatılana kadar tam olarak yükseltilmiş sayılmaz:
 
@@ -176,6 +206,14 @@ If you select 'y' the system will be restarted.
 Continue [yN]
 ```
 
+### 6. Güvenlik Duvarı Kuralını Kaldırma
+
+En son sürüme yükseltmeyi tamamladığımıza göre, 1022 numaralı port için güvenlik duvarı kuralını kaldırabiliriz. Bu işlemi yapmamızın ana nedeni, sistemimizi güvende tutmak ve denetlenmeyen portların çeşitli güvenlik açıklarına yol açabileceğinden emin olmaktır.
+
+```bash
+sudo ufw delete allow 1022/tcp
+```
+
 Bu adımları takip ederek Ubuntu 18.04 LTS sisteminizi başarılı bir şekilde Ubuntu 22.04 LTS'ye yükseltebilirsiniz. Yükseltme sırasında karşılaşabileceğiniz sorunları önlemek ve çözmek için dikkatli olun ve gerektiğinde yardım alın.
 
 ### Referanslar
@@ -184,3 +222,4 @@ Bu adımları takip ederek Ubuntu 18.04 LTS sisteminizi başarılı bir şekilde
 - [How to upgrade](https://ubuntu.com/server/docs/how-to-upgrade-your-release)
 - [Mirror List](http://tr.archive.ubuntu.com/ubuntu)
 - [Upgrading from Ubuntu 18.04 LTS to 22.04 LTS](https://medium.com/@BabajideKale/upgrading-from-ubuntu-18-04-lts-to-22-04-lts-adf5f4a54ffa)
+- [How to Upgrade from Ubuntu 22.04 LTS to Ubuntu 24.04 LTS](https://jumpcloud.com/blog/how-to-upgrade-ubuntu-22-04-to-ubuntu-24-04)
